@@ -1,29 +1,29 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: test-deployment-usercommits-abcd
+  name: test-deployment-usercommits-sach
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: user-commits-serviceabcd
+      app: user-commits-servicesach
   template:
     metadata:
       labels:
-        app: user-commits-serviceabcd
+        app: user-commits-servicesach
     spec:
       containers:
-      - name: user-commits-servicecabcd
-        image: 780417121799.dkr.ecr.us-east-1.amazonaws.com/github_user_commits_service:latest
+      - name: user-commits-servicesach
+        image: sachinitenn/github_user_commits_service:github_user_commits_service
 
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: user-commits-serviceabcd
+  name: user-commits-servicesach
 spec:
   selector:
-    app: user-commits-serviceabcd
+    app: user-commits-servicesach
   ports:
     - protocol: "TCP"
       port: 80
