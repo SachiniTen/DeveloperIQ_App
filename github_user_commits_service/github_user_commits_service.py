@@ -100,7 +100,7 @@ def get_github_commits_count_main():
     db.commit()
     print("Recorded inserted")
     return jsonify({
-        'Repository commits count': repo_commits_count,
+        'Repository commits countt': repo_commits_count,
         'User commits count': user_commits_count
     })
 
