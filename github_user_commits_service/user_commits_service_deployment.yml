@@ -1,29 +1,29 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: test-deploymentsnn
+  name: test-deployment_user_commits
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: user-commits-servicen
+      app: user-commits-service
   template:
     metadata:
       labels:
-        app: user-commits-servicen
+        app: user-commits-service
     spec:
       containers:
-      - name: user-commits-servicen
+      - name: user-commits-service
         image: sachinitenn/github_user_commits_service:github_user_commits_service
 
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: user-commits-servicen
+  name: user-commits-service
 spec:
   selector:
-    app: user-commits-servicen
+    app: user-commits-service
   ports:
     - protocol: "TCP"
       port: 80
