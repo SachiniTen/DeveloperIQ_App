@@ -6,24 +6,24 @@ spec:
   replicas: 1
   selector:
     matchLabels:
-      app: user-commits-servicecheck
+      app: user-commits-servicezz
   template:
     metadata:
       labels:
-        app: user-commits-servicecheck
+        app: user-commits-servicezz
     spec:
       containers:
-      - name: user-commits-servicecheck
+      - name: user-commits-serviceczz
         image: 780417121799.dkr.ecr.us-east-1.amazonaws.com/github_user_commits_service:latest
 
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: user-commits-servicecheck
+  name: user-commits-servicezz
 spec:
   selector:
-    app: user-commits-servicecheck
+    app: user-commits-servicezz
   ports:
     - protocol: "TCP"
       port: 80
