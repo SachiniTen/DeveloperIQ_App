@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: test-deploymentsnn
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: user-commits-servicen
+  template:
+    metadata:
+      labels:
+        app: user-commits-servicen
+    spec:
+      containers:
+      - name: user-commits-servicen
+        image: sachinitenn/github_user_commits_service:github_user_commits_service
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: user-commits-servicen
+spec:
+  selector:
+    app: user-commits-servicen
+  ports:
+    - protocol: "TCP"
+      port: 80
+      targetPort: 5000
+  type: LoadBalancer
