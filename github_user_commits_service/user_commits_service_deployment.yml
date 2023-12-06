@@ -1,29 +1,29 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: test-deployment-usercommits
+  name: test-deployment-usercommits-check
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: user-commits-service
+      app: user-commits-servicecheck
   template:
     metadata:
       labels:
-        app: user-commits-service
+        app: user-commits-servicecheck
     spec:
       containers:
-      - name: user-commits-service
-        image: sachinitenn/github_user_commits_service:github_user_commits_service
+      - name: user-commits-servicecheck
+        image: 780417121799.dkr.ecr.us-east-1.amazonaws.com/github_user_commits_service
 
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: user-commits-service
+  name: user-commits-servicecheck
 spec:
   selector:
-    app: user-commits-service
+    app: user-commits-servicecheck
   ports:
     - protocol: "TCP"
       port: 80
