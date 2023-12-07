@@ -100,9 +100,157 @@ def get_github_commits_count_main():
     db.commit()
     print("Recorded inserted")
     return jsonify({
-        'Repository commits countt': repo_commits_count,
-        'User commits count': user_commits_count
+        'Repository commits count': repo_commits_count,
+        'User commits count': user_commits_count,
     })
+
+
+
+
+# pull requests --------------------------
+# Example http://127.0.0.1:5000/get_github_pull_requests?owner_username=SachiniTen&repository=Bootcamp&developer_username=SachiniTen
+@app.route('/get_github_pull_requests', methods=['GET'])
+def get_github_pull_requests():
+    # Get parameters from the request URL
+    owner_username = request.args.get('owner_username')
+    repository = request.args.get('repository')
+    developer_username = request.args.get('developer_username')
+
+    # Check if required parameters are missing
+    if owner_username is None or repository is None or developer_username is None:
+        return jsonify({'error': 'Missing required parameters'}), 400
+
+    # Update the GitHub API query to get pull requests assigned to the developer
+    url_assigned = f"https://api.github.com/repos/{owner_username}/{repository}/pulls?state=all&assignee={developer_username}"
+    response_assigned = requests.get(url_assigned)
+
+    # Check for a successful API response
+    if response_assigned.status_code != 200:
+        return jsonify({'error': 'Failed to retrieve pull requests'}), response_assigned.status_code
+
+    # Parse the JSON response for assigned pull requests
+    pull_requests_count = len(response_assigned.json())
+
+    # Retrieve the total pull requests for the repository
+    url_total = f"https://api.github.com/repos/{owner_username}/{repository}/pulls?state=all"
+    response_total = requests.get(url_total)
+
+    # Check for a successful API response for total pull requests
+    if response_total.status_code != 200:
+        return jsonify({'error': 'Failed to retrieve total pull requests count'}), response_total.status_code
+
+    # Parse the JSON response for total pull requests
+    total_pull_requests_count = len(response_total.json())
+
+    # Insert data into the database
+    cursor = db.cursor()
+    insert_query = (
+        "INSERT INTO DeveloperIQ_db.github_user_pull_requests(developer_username, repository, owner, "
+        "repo_pull_requests_count, developer_pull_requests_count) VALUES (%s, %s, %s, %s, %s)"
+    )
+    cursor.execute(
+        insert_query,
+        (
+            developer_username,
+            repository,
+            owner_username,
+            total_pull_requests_count,
+            pull_requests_count,
+        ),
+    )
+    db.commit()
+
+    # Return JSON response with assigned and total pull requests counts
+    return jsonify({
+        'Assigned Pull Requests': pull_requests_count,
+        'Total Pull Requests': total_pull_requests_count,
+    })
+
+
+
+
+
+
+# issuess
+# Example usage
+# http://127.0.0.1:5000/get_github_issues?owner_username=SachiniTen&repository=Bootcamp&developer_username=SachiniTen
+@app.route('/get_github_issues', methods=['GET'])
+def get_github_issues():
+    # Get parameters from the request URL
+    owner_username = request.args.get('owner_username')
+    repository = request.args.get('repository')
+    developer_username = request.args.get('developer_username')
+
+    # Check if required parameters are missing
+    if owner_username is None or repository is None or developer_username is None:
+        return jsonify({'error': 'Missing required parameters'}), 400
+
+    # Update the GitHub API query to get issues assigned to the developer in the repository
+    url_assigned = f"https://api.github.com/repos/{owner_username}/{repository}/issues?assignee={developer_username}"
+    response_assigned = requests.get(url_assigned)
+
+    # Check for a successful API response
+    if response_assigned.status_code != 200:
+        return jsonify({'error': 'Failed to retrieve assigned issues'}), response_assigned.status_code
+
+    # Parse the JSON response for assigned issues
+    assigned_issues_count = len(response_assigned.json())
+
+    # Retrieve the total issue count for the repository
+    url_total = f"https://api.github.com/repos/{owner_username}/{repository}/issues"
+    response_total = requests.get(url_total)
+
+    # Check for a successful API response for total issues
+    if response_total.status_code != 200:
+        return jsonify({'error': 'Failed to retrieve total issues count'}), response_total.status_code
+
+    # Parse the JSON response for total issues
+    total_issues_count = len(response_total.json())
+
+    # Count open and closed issues from the total issues
+    open_issues_count = sum(1 for issue in response_total.json() if issue['state'] == 'open')
+    closed_issues_count = total_issues_count - open_issues_count
+
+    # Count open and closed issues assigned to the developer
+    open_issues_count_user = sum(1 for issue1 in response_assigned.json() if issue1['state'] == 'open')
+    closed_issues_count_user = assigned_issues_count - open_issues_count_user
+
+    # Insert data into the database
+    cursor = db.cursor()
+    insert_query = (
+        "INSERT INTO DeveloperIQ_db.github_user_issues(developer_username, repository, owner, "
+        "repo_total_issues_count, repo_open_issues_count, repo_closed_issues_count, "
+        "developer_total_issues_count, developer_open_issues_count, developer_closed_issues_count) "
+        "VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)"
+    )
+    cursor.execute(
+        insert_query,
+        (
+            developer_username,
+            repository,
+            owner_username,
+            total_issues_count,
+            open_issues_count,
+            closed_issues_count,
+            assigned_issues_count,
+            open_issues_count_user,
+            closed_issues_count_user,
+        ),
+    )
+    db.commit()
+
+    # Return JSON response with the counts
+    return jsonify({
+        'Assigned Issues': assigned_issues_count,
+        'Total Issues': total_issues_count,
+        'Repo Open Issues Count': open_issues_count,
+        'Repo Closed Issues Count': closed_issues_count,
+        'Developer Open Issues Count': open_issues_count_user,
+        'Developer Closed Issues Count': closed_issues_count_user,
+    })
+
+
+
 
 if __name__ == '__main__':
     app.run(host="0.0.0.0",debug=True)
