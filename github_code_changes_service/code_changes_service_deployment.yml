@@ -15,7 +15,9 @@ spec:
       containers:
       - name: code-changes-service
         image: sachinitenn/github_code_changes_service:github_code_changes_service
-
+        command: ["ls","github_code_changes_service"]
+        command: ["python", "github_code_changes_service/github_code_changes_service.py"]
+        
 ---
 apiVersion: v1
 kind: Service
