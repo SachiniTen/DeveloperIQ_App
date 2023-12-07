@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: code-changes-service
-        image: code_changes_service:tag1
+        image: sachinitenn/github_code_changes_service:github_code_changes_service
 
 ---
 apiVersion: v1
