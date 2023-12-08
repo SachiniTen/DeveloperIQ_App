@@ -19,7 +19,7 @@ def test_get_github_code_changes_success(client):
 
         assert response.status_code == 200
         data = response.json
-        assert 'added_lines' in data
+        assert 'added_liness' in data
         assert 'deleted_lines' in data
         assert 'total_files_count' in data
 
