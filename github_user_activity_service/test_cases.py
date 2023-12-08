@@ -17,7 +17,7 @@ def test_get_github_commits_count_main(client):
 
         assert response.status_code == 200
 
-        assert b'Repository commits countt' in response.data
+        assert b'Repository commits count' in response.data
         assert b'User commits count' in response.data
 
 
