@@ -19,7 +19,7 @@ spec:
     spec:
       containers:
       - name: user-activity-service
-        image: github_user_activity_service:tag1
+        image: sachinitenn/github_user_activity_service:latest
 
 ---
 apiVersion: v1
